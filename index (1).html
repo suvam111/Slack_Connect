@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slack Connect - Message Scheduler</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar__brand">
+            <svg class="navbar__logo" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313z"/>
+                <path d="M8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312z"/>
+                <path d="M18.956 8.834a2.528 2.528 0 0 1 2.521-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.523 2.521h-2.521V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312z"/>
+                <path d="M15.165 18.956a2.528 2.528 0 0 1 2.523 2.521A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.523v-2.521h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/>
+            </svg>
+            <span class="navbar__title">Slack Connect</span>
+        </div>
+        <div class="navbar__actions">
+            <div class="connection-status" id="connectionStatus">
+                <div class="connection-status__dot"></div>
+                <span class="connection-status__text">Connected</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <nav class="sidebar__nav">
+                <button class="sidebar__item sidebar__item--active" data-view="dashboard">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9,22 9,12 15,12 15,22"></polyline>
+                    </svg>
+                    Dashboard
+                </button>
+                <button class="sidebar__item" data-view="compose">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="m3 17 6-6-6-6"></path>
+                        <path d="m15 14 6-6-6-6"></path>
+                    </svg>
+                    Compose Message
+                </button>
+                <button class="sidebar__item" data-view="scheduled">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12,6 12,12 16,14"></polyline>
+                    </svg>
+                    Scheduled Messages
+                </button>
+                <button class="sidebar__item" data-view="settings">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="m19.4 15-1.85-3.2c.1-.63.15-1.27.15-1.8 0-.53-.05-1.17-.15-1.8L19.4 9l1.85 3.2L19.4 15zM15.7 4.6l-3.2 1.85c-.63-.1-1.27-.15-1.8-.15-.53 0-1.17.05-1.8.15L4.6 4.6 1.4 6.45 4.6 19.4l3.2-1.85c.63.1 1.27.15 1.8.15.53 0 1.17-.05 1.8-.15l3.2 1.85L19.4 6.45z"></path>
+                    </svg>
+                    Settings
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard View -->
+            <div class="view view--active" id="dashboardView">
+                <div class="view__header">
+                    <h1>Dashboard</h1>
+                    <p class="view__subtitle">Welcome to Slack Connect Message Scheduler</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card__icon" style="background-color: var(--color-bg-1);">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--color-primary)">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12,6 12,12 16,14"></polyline>
+                            </svg>
+                        </div>
+                        <div class="stat-card__content">
+                            <div class="stat-card__number" id="totalScheduled">0</div>
+                            <div class="stat-card__label">Total Scheduled</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card__icon" style="background-color: var(--color-bg-3);">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--color-success)">
+                                <path d="m3 17 6-6-6-6"></path>
+                                <path d="m15 14 6-6-6-6"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-card__content">
+                            <div class="stat-card__number" id="messagesSentToday">0</div>
+                            <div class="stat-card__label">Messages Sent Today</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card__icon" style="background-color: var(--color-bg-5);">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--color-warning)">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="m23 21-3.5-3.5"></path>
+                                <circle cx="19.5" cy="14.5" r="4.5"></circle>
+                            </svg>
+                        </div>
+                        <div class="stat-card__content">
+                            <div class="stat-card__number" id="activeChannels">0</div>
+                            <div class="stat-card__label">Active Channels</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-sections">
+                    <div class="dashboard-section">
+                        <h2>Recent Activity</h2>
+                        <div class="activity-list" id="recentActivity">
+                            <!-- Activity items will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="dashboard-section">
+                        <h2>Workspace Information</h2>
+                        <div class="workspace-info" id="workspaceInfo">
+                            <!-- Workspace info will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compose Message View -->
+            <div class="view" id="composeView">
+                <div class="view__header">
+                    <h1>Compose Message</h1>
+                    <p class="view__subtitle">Create and schedule messages for your Slack channels</p>
+                </div>
+
+                <div class="compose-form">
+                    <form id="messageForm">
+                        <div class="form-group">
+                            <label for="channelSelect" class="form-label">Channel</label>
+                            <select id="channelSelect" class="form-control" required>
+                                <option value="">Select a channel...</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="messageContent" class="form-label">Message</label>
+                            <textarea id="messageContent" class="form-control" rows="6" placeholder="Type your message here..." required></textarea>
+                            <div class="character-count">
+                                <span id="characterCount">0</span>/4000 characters
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="message-type-toggle">
+                                <label class="toggle-option">
+                                    <input type="radio" name="messageType" value="now" checked>
+                                    <span class="toggle-label">Send Now</span>
+                                </label>
+                                <label class="toggle-option">
+                                    <input type="radio" name="messageType" value="schedule">
+                                    <span class="toggle-label">Schedule Message</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group schedule-options" id="scheduleOptions" style="display: none;">
+                            <div class="datetime-inputs">
+                                <div class="form-group">
+                                    <label for="scheduleDate" class="form-label">Date</label>
+                                    <input type="date" id="scheduleDate" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="scheduleTime" class="form-label">Time</label>
+                                    <input type="time" id="scheduleTime" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="message-preview" id="messagePreview" style="display: none;">
+                            <h3>Preview</h3>
+                            <div class="preview-content">
+                                <div class="preview-header">
+                                    <strong id="previewChannel"></strong>
+                                    <span id="previewTime"></span>
+                                </div>
+                                <div class="preview-message" id="previewMessage"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn--outline" id="previewBtn">Preview</button>
+                            <button type="submit" class="btn btn--primary" id="submitBtn">Send Message</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Scheduled Messages View -->
+            <div class="view" id="scheduledView">
+                <div class="view__header">
+                    <h1>Scheduled Messages</h1>
+                    <p class="view__subtitle">Manage your upcoming and sent messages</p>
+                </div>
+
+                <div class="scheduled-controls">
+                    <div class="search-filters">
+                        <input type="text" id="messageSearch" class="form-control" placeholder="Search messages...">
+                        <select id="channelFilter" class="form-control">
+                            <option value="">All channels</option>
+                        </select>
+                        <select id="statusFilter" class="form-control">
+                            <option value="">All statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="sent">Sent</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                    <div class="bulk-actions">
+                        <button class="btn btn--outline" id="selectAllBtn">Select All</button>
+                        <button class="btn btn--outline" id="bulkCancelBtn" disabled>Cancel Selected</button>
+                        <button class="btn btn--outline" id="bulkDeleteBtn" disabled>Delete Selected</button>
+                    </div>
+                </div>
+
+                <div class="messages-table-container">
+                    <table class="messages-table">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllCheckbox"></th>
+                                <th>Channel</th>
+                                <th>Message</th>
+                                <th>Scheduled Time</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="messagesTableBody">
+                            <!-- Messages will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Settings View -->
+            <div class="view" id="settingsView">
+                <div class="view__header">
+                    <h1>Settings</h1>
+                    <p class="view__subtitle">Manage your Slack connection and preferences</p>
+                </div>
+
+                <div class="settings-sections">
+                    <div class="settings-section">
+                        <h2>Workspace Connection</h2>
+                        <div class="workspace-details" id="workspaceDetails">
+                            <!-- Workspace details will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h2>Permissions & Scopes</h2>
+                        <div class="permissions-list" id="permissionsList">
+                            <!-- Permissions will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h2>Notification Preferences</h2>
+                        <div class="notification-settings">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="emailNotifications" checked>
+                                <span class="checkbox-custom"></span>
+                                Email notifications for scheduled messages
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="pushNotifications" checked>
+                                <span class="checkbox-custom"></span>
+                                Push notifications for message delivery
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="settings-section settings-section--danger">
+                        <h2>Danger Zone</h2>
+                        <button class="btn btn--outline btn--danger" id="disconnectBtn">Disconnect from Slack</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Message Details Modal -->
+    <div class="modal hidden" id="messageModal">
+        <div class="modal__backdrop"></div>
+        <div class="modal__content">
+            <div class="modal__header">
+                <h2>Message Details</h2>
+                <button class="modal__close" id="closeModal">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal__body" id="modalContent">
+                <!-- Modal content will be populated by JavaScript -->
+            </div>
+            <div class="modal__footer">
+                <button class="btn btn--outline" id="editMessageBtn">Edit</button>
+                <button class="btn btn--outline btn--warning" id="cancelMessageBtn">Cancel</button>
+                <button class="btn btn--outline btn--danger" id="deleteMessageBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- OAuth Modal -->
+    <div class="modal hidden" id="oauthModal">
+        <div class="modal__backdrop"></div>
+        <div class="modal__content oauth-modal">
+            <div class="oauth-header">
+                <div class="oauth-logos">
+                    <svg class="oauth-logo" width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52z"/>
+                        <path d="M6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313z"/>
+                    </svg>
+                    <span class="oauth-connector">wants to access your</span>
+                    <div class="oauth-workspace">Slack workspace</div>
+                </div>
+                <h2>Authorize Slack Connect</h2>
+                <p>This app will be able to:</p>
+            </div>
+            <div class="oauth-permissions">
+                <div class="permission-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--color-success)">
+                        <polyline points="20,6 9,17 4,12"></polyline>
+                    </svg>
+                    <span>Read channel information</span>
+                </div>
+                <div class="permission-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--color-success)">
+                        <polyline points="20,6 9,17 4,12"></polyline>
+                    </svg>
+                    <span>Send messages to public channels</span>
+                </div>
+                <div class="permission-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--color-success)">
+                        <polyline points="20,6 9,17 4,12"></polyline>
+                    </svg>
+                    <span>Schedule messages</span>
+                </div>
+            </div>
+            <div class="oauth-actions">
+                <button class="btn btn--outline" id="denyAccess">Deny</button>
+                <button class="btn btn--primary" id="allowAccess">Allow</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div class="toast toast--success hidden" id="successToast">
+        <div class="toast__content">
+            <svg class="toast__icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <polyline points="20,6 9,17 4,12"></polyline>
+            </svg>
+            <span class="toast__message"></span>
+        </div>
+        <button class="toast__close">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
